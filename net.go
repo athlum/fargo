@@ -42,7 +42,7 @@ func (e *EurekaConnection) marshal(v interface{}) ([]byte, error) {
 
 // GetApp returns a single eureka application by name
 func (e *EurekaConnection) GetApp(name string) (*Application, error) {
-	slug := fmt.Sprintf("%s/%s", EurekaURLSlugs["Apps"], name)
+	slug := fmt.Sprintf("%s/%s", EurekaURLSlugs["Apps"], strings.ToUpper(name))
 	reqURL := e.generateURL(slug)
 	log.Debugf("Getting app %s from url %s", name, reqURL)
 	out, rcode, err := getBody(reqURL, e.UseJson)
@@ -630,7 +630,7 @@ func (s *InstanceSetSource) Stop() {
 // but DOES NOT automatically send heartbeats. See HeartBeatInstance for that
 // functionality
 func (e *EurekaConnection) RegisterInstance(ins *Instance) error {
-	slug := fmt.Sprintf("%s/%s", EurekaURLSlugs["Apps"], ins.App)
+	slug := fmt.Sprintf("%s/%s", EurekaURLSlugs["Apps"], ins.AppUpper())
 	reqURL := e.generateURL(slug)
 	log.Debugf("Registering instance with url %s", reqURL)
 	_, rcode, err := getBody(reqURL+"/"+ins.Id(), e.UseJson)
@@ -651,7 +651,7 @@ func (e *EurekaConnection) RegisterInstance(ins *Instance) error {
 // NOT automatically send heartbeats. See HeartBeatInstance for that
 // functionality
 func (e *EurekaConnection) ReregisterInstance(ins *Instance) error {
-	slug := fmt.Sprintf("%s/%s", EurekaURLSlugs["Apps"], ins.App)
+	slug := fmt.Sprintf("%s/%s", EurekaURLSlugs["Apps"], ins.AppUpper())
 	reqURL := e.generateURL(slug)
 
 	var out []byte
@@ -684,7 +684,7 @@ func (e *EurekaConnection) ReregisterInstance(ins *Instance) error {
 
 // GetInstance gets an Instance from eureka given its app and instanceid.
 func (e *EurekaConnection) GetInstance(app, insId string) (*Instance, error) {
-	slug := fmt.Sprintf("%s/%s/%s", EurekaURLSlugs["Apps"], app, insId)
+	slug := fmt.Sprintf("%s/%s/%s", EurekaURLSlugs["Apps"], strings.ToUpper(app), insId)
 	reqURL := e.generateURL(slug)
 	log.Debugf("Getting instance with url %s", reqURL)
 	body, rcode, err := getBody(reqURL, e.UseJson)
@@ -717,7 +717,7 @@ func (e *EurekaConnection) readInstanceInto(ins *Instance) error {
 // DeregisterInstance will deregister the given Instance from eureka. This is good practice
 // to do before exiting or otherwise going off line.
 func (e *EurekaConnection) DeregisterInstance(ins *Instance) error {
-	slug := fmt.Sprintf("%s/%s/%s", EurekaURLSlugs["Apps"], ins.App, ins.Id())
+	slug := fmt.Sprintf("%s/%s/%s", EurekaURLSlugs["Apps"], ins.AppUpper(), ins.Id())
 	reqURL := e.generateURL(slug)
 	log.Debugf("Deregistering instance with url %s", reqURL)
 
@@ -738,7 +738,7 @@ func (e *EurekaConnection) DeregisterInstance(ins *Instance) error {
 
 // AddMetadataString to a given instance. Is immediately sent to Eureka server.
 func (e EurekaConnection) AddMetadataString(ins *Instance, key, value string) error {
-	slug := fmt.Sprintf("%s/%s/%s/metadata", EurekaURLSlugs["Apps"], ins.App, ins.Id())
+	slug := fmt.Sprintf("%s/%s/%s/metadata", EurekaURLSlugs["Apps"], ins.AppUpper(), ins.Id())
 	reqURL := e.generateURL(slug)
 
 	params := map[string]string{key: value}
@@ -760,7 +760,7 @@ func (e EurekaConnection) AddMetadataString(ins *Instance, key, value string) er
 
 // UpdateInstanceStatus updates the status of a given instance with eureka.
 func (e EurekaConnection) UpdateInstanceStatus(ins *Instance, status StatusType) error {
-	slug := fmt.Sprintf("%s/%s/%s/status", EurekaURLSlugs["Apps"], ins.App, ins.Id())
+	slug := fmt.Sprintf("%s/%s/%s/status", EurekaURLSlugs["Apps"], ins.AppUpper(), ins.Id())
 	reqURL := e.generateURL(slug)
 
 	params := map[string]string{"value": string(status)}
@@ -782,7 +782,7 @@ func (e EurekaConnection) UpdateInstanceStatus(ins *Instance, status StatusType)
 // HeartBeatInstance sends a single eureka heartbeat. Does not continue sending
 // heartbeats. Errors if the response is not 200.
 func (e *EurekaConnection) HeartBeatInstance(ins *Instance) error {
-	slug := fmt.Sprintf("%s/%s/%s", EurekaURLSlugs["Apps"], ins.App, ins.Id())
+	slug := fmt.Sprintf("%s/%s/%s", EurekaURLSlugs["Apps"], ins.AppUpper(), ins.Id())
 	reqURL := e.generateURL(slug)
 	log.Debugf("Sending heartbeat with url %s", reqURL)
 	req, err := http.NewRequest("PUT", reqURL, nil)

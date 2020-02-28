@@ -3,6 +3,7 @@ package fargo
 // MIT Licensed (see README.md) - Copyright (c) 2013 Hudl <@Hudl>
 
 import (
+	"strings"
 	"time"
 )
 
@@ -103,6 +104,10 @@ type Instance struct {
 	Metadata  InstanceMetadata `xml:"metadata" json:"metadata"`
 
 	UniqueID func(i Instance) string `xml:"-" json:"-"`
+}
+
+func (i *Instance) AppUpper() string {
+	return strings.ToUpper(i.App)
 }
 
 // InstanceMetadata represents the eureka metadata, which is arbitrary XML.
