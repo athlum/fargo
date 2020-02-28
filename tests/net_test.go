@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hudl/fargo"
+	"github.com/athlum/fargo"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

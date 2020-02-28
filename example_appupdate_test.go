@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hudl/fargo"
+	"github.com/athlum/fargo"
 )
 
 func ExampleEurekaConnection_ScheduleAppUpdates() {
